@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Art Library</string>
+
+    <string name="title_activity_sign_up">Register an account</string>
+    <string name="title_home">Home</string>
+    <string name="title_artworks">Artworks</string>
+    <string name="title_post">Post</string>
+    <string name="title_account">Account</string>
+
+    <string name="artworkName">Artwork Name</string>
+    <string name="author">Author</string>
+    <string name="date">Data Published</string>
+    <string name="description">Description</string>
+    <string name="deviceName">Device Name</string>
+
+    <string name="name">Complete Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="number">Number</string>
+    <string name="address">Complete Address</string>
+
+    <string name="action_login">Login</string>
+    <string name="action_register">I don\'t have an account</string>
+    <string name="action_sign_up">Sign Up</string>
+    <string name="action_sign_in">I already have an account.</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_post">Post Artwork</string>
+    <string name="action_search">Search</string>
+    <string name="action_browse">Browse Area</string>
+    <string name="action_find">Finding Artwork</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+
+    <string name="error_login">Invalid email or password</string>
+    <string name="error_sign_up">Please fill up all fields</string>
+    <string name="error_invalid_email">Email is invalid</string>
+    <string name="error_invalid_password">Password is invalid</string>
+    <string name="error_post_artwork">Please fill up all fields</string>
+    <string name="error_product_image">Please upload product picture</string>
+</resources>

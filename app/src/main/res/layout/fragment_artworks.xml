@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/fragment_padding">
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/text_vertical_margin">
+
+        <EditText
+            android:id="@+id/txtArtworkSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/action_search"
+            android:inputType="text"
+            android:textSize="@dimen/edit_font_size"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <include
+        layout="@layout/fragment_item_list"
+        android:id="@+id/viewArtworkList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+
+</LinearLayout>

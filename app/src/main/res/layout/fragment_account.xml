@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:padding="@dimen/fragment_padding">
+
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:text="@string/title_account"-->
+        <!--android:textSize="@dimen/fragment_title_size"-->
+        <!--android:textStyle="bold"-->
+        <!--android:textColor="@color/colorBlack"/>-->
+
+    <LinearLayout
+        android:id="@+id/formLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnAccountLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_login"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnAccountSignIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_register"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/formAccount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/text_vertical_margin"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_font_size"
+            android:text="@string/name"/>
+        <TextView
+            android:id="@+id/txtUserEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtUserName"
+            android:layout_marginBottom="@dimen/text_vertical_margin"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_font_size"
+            android:text="@string/email"/>
+        <TextView
+            android:id="@+id/txtUserNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtUserEmail"
+            android:layout_marginBottom="@dimen/text_vertical_margin"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_font_size"
+            android:text="@string/number"/>
+        <TextView
+            android:id="@+id/txtUserAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtUserNumber"
+            android:layout_marginBottom="@dimen/text_vertical_margin"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_font_size"
+            android:text="@string/address"/>
+        <Button
+            android:id="@+id/btnAccountLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtUserAddress"
+            android:layout_marginTop="@dimen/btn_vertical_margin"
+            android:text="@string/action_logout"
+            android:textStyle="bold" />
+
+        <include
+            layout="@layout/fragment_item_list"
+            android:id="@+id/viewArtworkList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnAccountLogout"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>
