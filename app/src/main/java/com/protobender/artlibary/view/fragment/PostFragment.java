@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.InputStream;
+
+import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -149,6 +151,7 @@ public class PostFragment extends Fragment {
 
             @Override
             public void onFailure(@Nullable Call<Result> call, @NonNull Throwable t) {
+                Utils.dismissProgressDialog(pDialog);
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -156,12 +159,16 @@ public class PostFragment extends Fragment {
 
     private void parseRequestBody() {
         File filePath = new File(Utils.getRealPathFromURI(getActivity(), fileUri));
-        artworkNameBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getArtworkName());
-        authorBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getAuthor());
-        dateBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getDate());
-        descriptionBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getDescription());
-        deviceNameBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getDeviceName());
-        userIdBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(artwork.getUserId()));
-        fileBody = RequestBody.create(MediaType.parse(getActivity().getContentResolver().getType(fileUri)), filePath);
+        try {
+            artworkNameBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getArtworkName());
+            authorBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getAuthor());
+            dateBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getDate());
+            descriptionBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getDescription());
+            deviceNameBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getDeviceName());
+            userIdBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(artwork.getUserId()));
+            fileBody = RequestBody.create(MediaType.parse(getActivity().getContentResolver().getType(fileUri)), new Compressor(getActivity()).compressToFile(filePath));
+        } catch (Exception ex) {
+
+        }
     }
 }

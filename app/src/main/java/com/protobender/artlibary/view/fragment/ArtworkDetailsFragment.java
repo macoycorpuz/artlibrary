@@ -96,6 +96,8 @@ public class ArtworkDetailsFragment extends Fragment {
                 .load(artwork.getArtworkUrl())
                 .placeholder(R.drawable.ic_photo_blue_24dp)
                 .error(R.drawable.ic_error_outline_red_24dp)
+                .fit()
+                .centerCrop()
                 .into(mImage);
     }
 
@@ -119,6 +121,7 @@ public class ArtworkDetailsFragment extends Fragment {
 
             @Override
             public void onFailure(@Nullable Call<Result> call, @NonNull Throwable t) {
+                Utils.dismissProgressDialog(pDialog);
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });

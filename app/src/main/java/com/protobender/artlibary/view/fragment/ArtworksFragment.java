@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.protobender.artlibary.R;
 import com.protobender.artlibary.domain.Api;
+import com.protobender.artlibary.model.CenterRepo;
 import com.protobender.artlibary.model.entity.Artwork;
 import com.protobender.artlibary.model.entity.Result;
 import com.protobender.artlibary.util.Tags;
@@ -110,6 +111,7 @@ public class ArtworksFragment extends Fragment {
                         throw new Exception(response.body().getMessage());
                     Log.d(TAG, "onResponse: artworks");
                     artworkList = response.body().getArtworks();
+                    CenterRepo.getCenterRepo().setArtworkList(artworkList);
                     showArtwork();
                 } catch (Exception ex) {
                     Utils.handleError(ex.getMessage(), mError, mProgress, mSwipeRefreshLayout);

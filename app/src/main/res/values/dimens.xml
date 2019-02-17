@@ -12,7 +12,7 @@
     <dimen name="fragment_padding">15dp</dimen>
 
     <dimen name="card_view_height">150dp</dimen>
-    <dimen name="card_view_vertical_margin">10dp</dimen>
+    <dimen name="card_view_vertical_margin">5dp</dimen>
     <dimen name="card_view_corner_radius">20dp</dimen>
     <dimen name="card_view_elevation">10dp</dimen>
 

@@ -121,6 +121,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@Nullable Call<Result> call, @NonNull Throwable t) {
+                Utils.dismissProgressDialog(pDialog);
                 Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });

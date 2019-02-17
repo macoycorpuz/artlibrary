@@ -43,6 +43,8 @@ public class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ArtworkV
                 .load(artwork.getArtworkUrl())
                 .placeholder(R.drawable.ic_photo_blue_24dp)
                 .error(R.drawable.ic_error_outline_red_24dp)
+                .fit()
+                .centerCrop()
                 .into(holder.imgArtwork);
     }
 

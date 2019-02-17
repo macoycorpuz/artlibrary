@@ -96,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<Result> call, Throwable t) {
+                Utils.dismissProgressDialog(pDialog);
                 Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });

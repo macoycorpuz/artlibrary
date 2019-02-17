@@ -15,8 +15,8 @@ import retrofit2.http.Path;
 
 public interface Services {
 
-    //String MAIN_URL = "http://protobender.000webhostapp.com/ArtLibrary/public/";
-    String MAIN_URL = "http://192.168.1.7/ArtLibrary/public/";
+    String MAIN_URL = "http://protobender.000webhostapp.com/ArtLibrary/public/";
+    //String MAIN_URL = "http://192.168.1.7/ArtLibrary/public/";
 
     @GET("login/email/{email}/password/{password}")
     Call<Result> login(@Path("email") String email, @Path("password") String password);
@@ -52,7 +52,7 @@ public interface Services {
     @GET("artworks/artworkId/{artworkId}")
     Call<Result> updateArtwork(@Path("artworkId") String artworkId);
 
-    @DELETE("artworks/artworkId/{artworkId}")
+    @GET("artworks/delete/{artworkId}")
     Call<Result> deleteArtwork(@Path("artworkId") int artworkId);
 
 }
