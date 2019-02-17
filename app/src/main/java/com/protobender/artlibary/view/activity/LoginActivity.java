@@ -58,6 +58,12 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, HomeActivity.class));
+    }
+
     private void clearViews() {
         mError.setVisibility(View.GONE);
         mEmail.setError(null);
@@ -105,5 +111,6 @@ public class LoginActivity extends AppCompatActivity {
     private void login(User user) {
         SharedPrefManager.getInstance().userLogin(getApplicationContext(), user);
         finish();
+        startActivity(new Intent(this, HomeActivity.class));
     }
 }

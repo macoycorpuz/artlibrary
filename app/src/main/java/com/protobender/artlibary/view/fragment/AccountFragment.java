@@ -139,10 +139,12 @@ public class AccountFragment extends Fragment {
     }
 
     private void login() {
+        getActivity().finish();
         startActivity(new Intent(getActivity(), LoginActivity.class));
     }
 
     private void signIn() {
+        getActivity().finish();
         startActivity(new Intent(getActivity(), SignUpActivity.class));
     }
 

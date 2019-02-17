@@ -68,7 +68,6 @@ public class HomeActivity  extends AppCompatActivity {
         int count = getFragmentManager().getBackStackEntryCount();
         if (count == 0) {
             super.onBackPressed();
-            //additional code
         } else {
             getFragmentManager().popBackStack();
         }

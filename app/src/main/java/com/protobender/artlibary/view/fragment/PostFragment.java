@@ -90,10 +90,9 @@ public class PostFragment extends Fragment {
             if (requestCode == PICK_IMAGE_REQUEST) {
                 try {
                     fileUri = data.getData();
-                    InputStream imageStream = getActivity().getContentResolver().openInputStream(fileUri);
-                    Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                    mImage.setImageBitmap(selectedImage);
-                    mImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    mImage.setImageBitmap(new Compressor(getActivity())
+                            .compressToBitmap(new File(Utils.getRealPathFromURI(getActivity(), fileUri))));
+                    mImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
