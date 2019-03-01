@@ -3,6 +3,8 @@ package com.protobender.artlibary.view.fragment;
 import com.protobender.artlibary.R;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,20 +26,23 @@ import com.protobender.artlibary.util.Tags;
 import com.protobender.artlibary.util.Utils;
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ArtworkDetailsFragment extends Fragment {
+public class ArtworkDetailsFragment extends Fragment{
 
     //region Attributes
     String TAG = "Artwork Details";
 
     View mView, mViewButtons;
-    TextView mArtworkName, mAuthor, mDate, mDescription, mDeviceName;
+    TextView mArtworkName, mAuthor, mDate, mDescription, mDeviceName, mStrength;
     Button mEdit, mDelete;
     ImageView mImage;
     ProgressDialog pDialog;
+    TextToSpeech tts;
 
 
     int position;
@@ -49,6 +54,7 @@ public class ArtworkDetailsFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_artwork_details, container, false);
         mViewButtons = mView.findViewById(R.id.viewArtButtons);
 
+        mStrength = mView.findViewById(R.id.txtArtStrength);
         mArtworkName = mView.findViewById(R.id.txtArtName);
         mAuthor = mView.findViewById(R.id.txtArtAuthor);
         mDate = mView.findViewById(R.id.txtArtDate);
@@ -69,10 +75,27 @@ public class ArtworkDetailsFragment extends Fragment {
                 deleteArtwork();
             }
         });
+        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.UK);
+                }
+            }
+        });
 
         showArtwork();
         authenticate();
         return mView;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
     }
 
     public void setPosition(int position) {
@@ -99,6 +122,7 @@ public class ArtworkDetailsFragment extends Fragment {
                 .fit()
                 .centerCrop()
                 .into(mImage);
+        readDescription();
     }
 
     private void deleteArtwork() {
@@ -125,5 +149,15 @@ public class ArtworkDetailsFragment extends Fragment {
                 Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void readDescription() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tts.speak(artwork.getDescription(), TextToSpeech.QUEUE_FLUSH, null, null);
+            }
+        }, 100);
     }
 }

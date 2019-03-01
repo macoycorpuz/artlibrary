@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,6 +42,7 @@ import com.protobender.artlibary.util.Utils;
 import com.protobender.artlibary.view.adapter.ArtworkAdapter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -65,6 +67,8 @@ public class HomeFragment extends Fragment {
 
     BluetoothAdapter mBluetoothAdapter;
     List<BluetoothDevice> mDevices = new ArrayList<>();
+    boolean deviceFound = false;
+    boolean deviceFar = false;
     //endregion
 
     @Nullable
@@ -80,7 +84,7 @@ public class HomeFragment extends Fragment {
         mRecyclerView = mViewArtworkList.findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
+        ((DefaultItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         mBrowse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,12 +124,12 @@ public class HomeFragment extends Fragment {
         mViewArtworkList.setVisibility(View.VISIBLE);
     }
 
-    private void showArtwork() {
+    private void showArtwork()  {
         clearView();
         ArtworkHelper.fetchArtworks(getActivity(), mError, mProgress, mSwipeRefreshLayout);
         browseArtwork();
         discoveredArtwork = new ArrayList<>();
-        artworkAdapter = new ArtworkAdapter(getActivity(), discoveredArtwork);
+        artworkAdapter = new ArtworkAdapter(getActivity(), discoveredArtwork, Tags.BROWSE_MODE);
         artworkAdapter.setOnItemClickListener(new ArtworkAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -141,9 +145,33 @@ public class HomeFragment extends Fragment {
         Utils.showProgress(true, mProgress, mSwipeRefreshLayout);
         mBluetoothAdapter.cancelDiscovery();
         if(!mBluetoothAdapter.isDiscovering()){
+            Log.d(TAG, "browseArtwork: Discovering...");
             mBluetoothAdapter.startDiscovery();
             IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             getActivity().registerReceiver(btReceiver, discoverDevicesIntent);
+        }
+    }
+
+    private void artworksFound(BluetoothDevice device, int rssi) {
+        List<Artwork> artworks = CenterRepo.getCenterRepo().getArtworkList();
+        for(Artwork art : artworks) {
+            if(art.getDeviceName().equals(device.getName())) {
+                int index = 0;
+                for (Iterator<Artwork> iterator = discoveredArtwork.iterator(); iterator.hasNext(); ) {
+                    index++;
+                    Artwork artwork = iterator.next();
+                    if (artwork.getDeviceName().equals(device.getName())) {
+                        if (rssi < -68) deviceFar = true;
+                        iterator.remove();
+                    }
+                }
+                art.setRssi(rssi);
+                try {if (deviceFar) discoveredArtwork.remove(index);}
+                catch(Exception ex) {Log.d(TAG, "artworksFound: " + ex.getMessage());}
+                if (rssi > -68) discoveredArtwork.add(art);
+                artworkAdapter.notifyDataSetChanged();
+                Utils.showProgress(false, mProgress, mSwipeRefreshLayout);
+            }
         }
     }
 
@@ -152,23 +180,22 @@ public class HomeFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            Log.d(TAG, "onReceive: ACTION FOUND.");
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)){
-
                 BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
-                short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
-                Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress() + ": " + String.valueOf(rssi));
+                int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+                Log.d(TAG, "onReceive: " + device.getName() + ": " + String.valueOf(rssi));
 
-                Artwork artwork = new Artwork();
-                List<Artwork> artworks = CenterRepo.getCenterRepo().getArtworkList();
-                for(Artwork art : artworks) {
-                    Log.d(TAG, "getArtworkByDevice: art " + art.getDeviceName());
-                    if(art.getDeviceName().equals(device.getName()))
-                        discoveredArtwork.add(artwork);
-                        artworkAdapter.notifyDataSetChanged();
-                        Utils.showProgress(false, mProgress, mSwipeRefreshLayout);
-                }
+                deviceFound = true;
+                mBluetoothAdapter.cancelDiscovery();
+                artworksFound(device, rssi);
+                deviceFound = false;
+                mBluetoothAdapter.startDiscovery();
+            }
+
+            if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Log.d(TAG, "onReceive: Discovery Finished");
+                if(!deviceFound) mBluetoothAdapter.startDiscovery();
             }
         }
     };

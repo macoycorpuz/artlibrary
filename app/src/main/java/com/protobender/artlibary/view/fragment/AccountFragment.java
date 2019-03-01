@@ -112,7 +112,7 @@ public class AccountFragment extends Fragment {
 
         clearView();
         ArtworkHelper.fetchArtworks(getActivity(), mError, mProgress, mSwipeRefreshLayout);
-        artworkAdapter = new ArtworkAdapter(getActivity(), artworkList());
+        artworkAdapter = new ArtworkAdapter(getActivity(), artworkList(), 0);
         artworkAdapter.setOnItemClickListener(new ArtworkAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {

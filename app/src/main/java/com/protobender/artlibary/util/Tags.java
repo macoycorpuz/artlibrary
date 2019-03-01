@@ -15,4 +15,6 @@ public interface Tags {
     String KEY_USER_EMAIL = "email";
     String KEY_USER_NUMBER = "number";
     String KEY_USER_ADDRESS = "address";
+
+    int BROWSE_MODE = 1;
 }

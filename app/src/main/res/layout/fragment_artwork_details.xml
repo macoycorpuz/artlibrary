@@ -43,6 +43,14 @@
                 android:textColor="@android:color/background_dark"
                 android:text="@string/artworkName"/>
 
+
+            <TextView
+                android:id="@+id/txtArtStrength"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@android:color/background_dark" />
+
             <TextView
                 android:id="@+id/txtArtAuthor"
                 android:layout_width="match_parent"
@@ -75,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/text_vertical_margin"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textColor="@android:color/background_dark"
                 android:text="@string/deviceName" />
 

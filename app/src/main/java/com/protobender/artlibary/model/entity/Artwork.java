@@ -21,6 +21,8 @@ public class Artwork {
     private int userId;
     @Expose
     private User user;
+    @Expose
+    private int rssi;
 
     public Artwork() {
     }
@@ -104,5 +106,13 @@ public class Artwork {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public int getRssi() {
+        return rssi;
+    }
+
+    public void setRssi(int rssi) {
+        this.rssi = rssi;
     }
 }
