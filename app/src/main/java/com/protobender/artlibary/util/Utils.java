@@ -148,6 +148,7 @@ public class Utils {
     //region Fragment Util
     private static String CURRENT_TAG = null;
     private static int position = 0;
+    private static int MODE = 0;
 
     public static void switchContent(FragmentActivity baseActivity, int id, String TAG) {
 
@@ -171,6 +172,7 @@ public class Utils {
                 case Tags.ARTWORK_DETAILS_FRAGMENT:
                     fragment = new ArtworkDetailsFragment();
                     ((ArtworkDetailsFragment) fragment).setPosition(position);
+                    ((ArtworkDetailsFragment) fragment).setMode(MODE);
                     break;
                 default:
                     fragment = null;
@@ -185,6 +187,10 @@ public class Utils {
 
     public static void setPosition(int position) {
         Utils.position = position;
+    }
+
+    public static void setMode(int MODE) {
+        Utils.MODE = MODE;
     }
 
     //endregion

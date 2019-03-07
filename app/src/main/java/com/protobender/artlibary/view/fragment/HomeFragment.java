@@ -134,6 +134,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Utils.setPosition(position);
+                Utils.setMode(Tags.BROWSE_MODE);
                 Utils.switchContent(getActivity(), R.id.fragContainer, Tags.ARTWORK_DETAILS_FRAGMENT);
             }
         });
@@ -154,25 +155,33 @@ public class HomeFragment extends Fragment {
 
     private void artworksFound(BluetoothDevice device, int rssi) {
         List<Artwork> artworks = CenterRepo.getCenterRepo().getArtworkList();
+
+        //Check each artwork in database
         for(Artwork art : artworks) {
             if(art.getDeviceName().equals(device.getName())) {
                 int index = 0;
+
+                //Check discovered artworks
                 for (Iterator<Artwork> iterator = discoveredArtwork.iterator(); iterator.hasNext(); ) {
                     index++;
                     Artwork artwork = iterator.next();
                     if (artwork.getDeviceName().equals(device.getName())) {
-                        if (rssi < -68) deviceFar = true;
-                        iterator.remove();
+
+                        if (rssi < -68) deviceFar = true; //Device is Fart if dBm is less than 68
+                        iterator.remove(); //Remove if it exists
                     }
                 }
-                art.setRssi(rssi);
-                try {if (deviceFar) discoveredArtwork.remove(index);}
+
+                art.setRssi(rssi); //Set RSSI
+                try {if (deviceFar) discoveredArtwork.remove(index);} //Remove if far
                 catch(Exception ex) {Log.d(TAG, "artworksFound: " + ex.getMessage());}
+
                 if (rssi > -68) discoveredArtwork.add(art);
                 artworkAdapter.notifyDataSetChanged();
                 Utils.showProgress(false, mProgress, mSwipeRefreshLayout);
             }
         }
+        CenterRepo.getCenterRepo().setDiscoveredArtwork(discoveredArtwork);
     }
 
     //region btReceiver

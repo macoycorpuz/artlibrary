@@ -44,8 +44,8 @@ public class ArtworkDetailsFragment extends Fragment{
     ProgressDialog pDialog;
     TextToSpeech tts;
 
-
     int position;
+    int MODE;
     Artwork artwork;
     //endregion
 
@@ -102,6 +102,8 @@ public class ArtworkDetailsFragment extends Fragment{
         this.position = position;
     }
 
+    public void setMode(int MODE) {this.MODE = MODE;}
+
     private void authenticate() {
         boolean isLoggedIn = SharedPrefManager.getInstance().isLoggedIn(getActivity());
         int userId = SharedPrefManager.getInstance().getUser(getActivity()).getUserId();
@@ -109,7 +111,9 @@ public class ArtworkDetailsFragment extends Fragment{
     }
 
     private void showArtwork() {
-        artwork = CenterRepo.getCenterRepo().getArtworkList().get(position);
+        artwork = (MODE == Tags.BROWSE_MODE) ?
+                CenterRepo.getCenterRepo().getDiscoveredArtwork().get(position) :
+                CenterRepo.getCenterRepo().getArtworkList().get(position);
         mArtworkName.setText(artwork.getArtworkName());
         mAuthor.setText(artwork.getAuthor());
         mDate.setText(artwork.getDate());
