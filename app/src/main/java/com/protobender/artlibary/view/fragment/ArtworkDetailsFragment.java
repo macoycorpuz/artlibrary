@@ -2,6 +2,8 @@ package com.protobender.artlibary.view.fragment;
 
 import com.protobender.artlibary.R;
 import android.app.ProgressDialog;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -26,6 +28,7 @@ import com.protobender.artlibary.util.Tags;
 import com.protobender.artlibary.util.Utils;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -38,7 +41,7 @@ public class ArtworkDetailsFragment extends Fragment{
     String TAG = "Artwork Details";
 
     View mView, mViewButtons;
-    TextView mArtworkName, mAuthor, mDate, mDescription, mDeviceName, mStrength;
+    TextView mArtworkName, mAuthor, mDate, mDescription, mDeviceName, mStrength, mPrice, mLocation;
     Button mEdit, mDelete;
     ImageView mImage;
     ProgressDialog pDialog;
@@ -47,6 +50,10 @@ public class ArtworkDetailsFragment extends Fragment{
     int position;
     int MODE;
     Artwork artwork;
+
+    private static String audioFileName = null;
+    private MediaPlayer player = null;
+    private boolean mStartPlaying = true;
     //endregion
 
     @Override
@@ -60,6 +67,8 @@ public class ArtworkDetailsFragment extends Fragment{
         mDate = mView.findViewById(R.id.txtArtDate);
         mDescription = mView.findViewById(R.id.txtArtDescription);
         mDeviceName = mView.findViewById(R.id.txtArtDeviceName);
+        mPrice = mView.findViewById(R.id.txtArtPrice);
+        mLocation = mView.findViewById(R.id.txtArtLocation);
         mImage = mView.findViewById(R.id.imgArtwork);
         mEdit = mView.findViewById(R.id.btnEdit);
         mDelete = mView.findViewById(R.id.btnDelete);
@@ -114,11 +123,27 @@ public class ArtworkDetailsFragment extends Fragment{
         artwork = (MODE == Tags.BROWSE_MODE) ?
                 CenterRepo.getCenterRepo().getDiscoveredArtwork().get(position) :
                 CenterRepo.getCenterRepo().getArtworkList().get(position);
-        mArtworkName.setText(artwork.getArtworkName());
-        mAuthor.setText(artwork.getAuthor());
-        mDate.setText(artwork.getDate());
-        mDescription.setText(artwork.getDescription());
-        mDeviceName.setText(String.valueOf(artwork.getDeviceName()));
+        String Name = artwork.getArtworkName();
+        String Author = "Author: " + artwork.getAuthor();
+        String Date = "Date: " + artwork.getDate();
+        String Description = "Description: " + artwork.getDescription();
+        String DeviceName = "Device Name: " + String.valueOf(artwork.getDeviceName());
+        String Price = "Price: " + artwork.getPrice();
+        String Location = "Location: " +artwork.getLocation();
+        mArtworkName.setText(Name);
+        mAuthor.setText(Author);
+        mDate.setText(Date);
+        mDescription.setText(Description);
+        mDeviceName.setText(DeviceName);
+        mPrice.setText(Price);
+        mLocation.setText(Location);
+//        mArtworkName.setText(artwork.getArtworkName());
+//        mAuthor.setText(artwork.getAuthor());
+//        mDate.setText(artwork.getDate());
+//        mDescription.setText(artwork.getDescription());
+//        mDeviceName.setText(String.valueOf(artwork.getDeviceName()));
+//        mPrice.setText(String.valueOf(artwork.getPrice()));
+//        mLocation.setText(String.valueOf(artwork.getLocation()));
         Picasso.get()
                 .load(artwork.getArtworkUrl())
                 .placeholder(R.drawable.ic_photo_blue_24dp)
@@ -126,7 +151,9 @@ public class ArtworkDetailsFragment extends Fragment{
                 .fit()
                 .centerCrop()
                 .into(mImage);
-        readDescription();
+//        readDescription();
+
+        onPlay(mStartPlaying);
     }
 
     private void deleteArtwork() {
@@ -164,4 +191,43 @@ public class ArtworkDetailsFragment extends Fragment{
             }
         }, 100);
     }
+
+
+    //region Playing
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+    private void onPlay(boolean start) {
+        if (start) {
+            startPlaying();
+        } else {
+            stopPlaying();
+        }
+    }
+
+    private void startPlaying() {
+        player = new MediaPlayer();
+        try {
+            Log.d(TAG, "startPlaying: " + artwork.getArtworkAudio());
+            player.setDataSource(artwork.getArtworkAudio());
+            player.prepare();
+            player.start();
+        } catch (IOException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void stopPlaying() {
+        player.release();
+        player = null;
+    }
+
+    //endregion
 }

@@ -14,11 +14,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import id.zelory.compressor.Compressor;
@@ -39,24 +44,33 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PostFragment extends Fragment {
+public class PostFragment extends Fragment{
 
     //region Attributes
+    String TAG = "Post Fragment";
     View mView;
-    EditText mArtworkName, mAuthor, mDate, mDescription, mDeviceName;
+    Button mRecord, mPlay, mPost;
+    EditText mArtworkName, mAuthor, mDate, mDescription, mDeviceName, mPrice, mLocation;
     ImageView mImage;
     TextView mError;
     ProgressDialog pDialog;
 
-    RequestBody artworkNameBody, authorBody, dateBody, descriptionBody, deviceNameBody, userIdBody, fileBody;
+    RequestBody artworkNameBody, authorBody, dateBody, descriptionBody, deviceNameBody, userIdBody, fileBody, priceBody, locationBody, audioBody;
     Uri fileUri;
 
     int PICK_IMAGE_REQUEST = 1;
     Artwork artwork;
+
+    private static String audioFileName = null;
+    private MediaRecorder recorder = null;
+    private MediaPlayer player = null;
+    private boolean mStartRecording = true;
+    private boolean mStartPlaying = true;
     //endregion
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         mView = inflater.inflate(R.layout.fragment_post, container, false);
 
         // Initialize Views
@@ -65,13 +79,31 @@ public class PostFragment extends Fragment {
         mDate = mView.findViewById(R.id.txtPostDate);
         mDescription = mView.findViewById(R.id.txtPostDescription);
         mDeviceName = mView.findViewById(R.id.txtPostDeviceName);
+        mPrice = mView.findViewById(R.id.txtPostPrice);
+        mLocation = mView.findViewById(R.id.txtPostLocation);
         mImage = mView.findViewById(R.id.imgPostArtwork);
         mError = mView.findViewById(R.id.txtPostError);
-        Button mPost = mView.findViewById(R.id.btnPost);
+
+        mRecord = mView.findViewById(R.id.btnRecord);
+        mPlay = mView.findViewById(R.id.btnPlay);
+        mPost = mView.findViewById(R.id.btnPost);
+
         mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openGallery();
+            }
+        });
+        mRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickRecord();
+            }
+        });
+        mPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickPlay();
             }
         });
         mPost.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +125,7 @@ public class PostFragment extends Fragment {
                     mImage.setImageBitmap(new Compressor(getActivity())
                             .compressToBitmap(new File(Utils.getRealPathFromURI(getActivity(), fileUri))));
                     mImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    Log.d(TAG, "onActivityResult: " + getActivity().getContentResolver().getType(fileUri));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -111,18 +144,23 @@ public class PostFragment extends Fragment {
         mError.setVisibility(View.GONE);
         int userId = SharedPrefManager.getInstance().getUser(getActivity()).getUserId();
         artwork = new Artwork(
+                userId,
+                mDeviceName.getText().toString(),
                 mArtworkName.getText().toString(),
                 mAuthor.getText().toString(),
                 mDate.getText().toString(),
                 mDescription.getText().toString(),
-                mDeviceName.getText().toString(),
-                userId);
+                mPrice.getText().toString(),
+                mLocation.getText().toString());
 
-        if (!Utils.isEmptyFields(artwork.getArtworkName(), artwork.getAuthor(), artwork.getDate(), artwork.getDescription(), artwork.getDeviceName())) {
+        if (!Utils.isEmptyFields(artwork.getArtworkName(), artwork.getAuthor(), artwork.getDate(), artwork.getDescription(), artwork.getDeviceName(), artwork.getPrice(), artwork.getLocation())) {
             mError.setText(R.string.error_post_artwork);
             mError.setVisibility(View.VISIBLE);
         } else if (fileUri == null) {
             mError.setText(R.string.error_product_image);
+            mError.setVisibility(View.VISIBLE);
+        } else if (audioFileName == null) {
+            mError.setText(R.string.error_audio);
             mError.setVisibility(View.VISIBLE);
         } else {
             Utils.hideKeyboard(getActivity());
@@ -133,7 +171,7 @@ public class PostFragment extends Fragment {
     private void postProduct() {
         pDialog = Utils.showProgressDialog(getActivity(), "Posting your product...");
         parseRequestBody();
-        Api.getInstance().getServices().setArtwork(artworkNameBody, authorBody, dateBody, descriptionBody, deviceNameBody, userIdBody, fileBody).enqueue(new Callback<Result>() {
+        Api.getInstance().getServices().setArtwork(userIdBody, deviceNameBody, artworkNameBody, authorBody, dateBody, descriptionBody, priceBody, locationBody, fileBody, audioBody).enqueue(new Callback<Result>() {
             @Override
             public void onResponse(@Nullable Call<Result> call, @NonNull Response<Result> response) {
                 try {
@@ -157,7 +195,8 @@ public class PostFragment extends Fragment {
     }
 
     private void parseRequestBody() {
-        File filePath = new File(Utils.getRealPathFromURI(getActivity(), fileUri));
+        File imagePath = new File(Utils.getRealPathFromURI(getActivity(), fileUri));
+        File audioPath = new File(audioFileName);
         try {
             artworkNameBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getArtworkName());
             authorBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getAuthor());
@@ -165,9 +204,115 @@ public class PostFragment extends Fragment {
             descriptionBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getDescription());
             deviceNameBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getDeviceName());
             userIdBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(artwork.getUserId()));
-            fileBody = RequestBody.create(MediaType.parse(getActivity().getContentResolver().getType(fileUri)), new Compressor(getActivity()).compressToFile(filePath));
+            priceBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getPrice());
+            locationBody = RequestBody.create(MediaType.parse("text/plain"), artwork.getLocation());
+            fileBody = RequestBody.create(MediaType.parse(getActivity().getContentResolver().getType(fileUri)), new Compressor(getActivity()).compressToFile(imagePath));
+            audioBody = RequestBody.create(MediaType.parse("audio/mp3"), audioPath);
         } catch (Exception ex) {
 
         }
     }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (recorder != null) {
+            recorder.release();
+            recorder = null;
+        }
+
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+    //region Recording
+
+    public void onClickRecord() {
+        onRecord(mStartRecording);
+        if (mStartRecording) {
+            mRecord.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorError));
+            mRecord.setText("Stop Recording");
+        } else {
+            mRecord.setBackgroundResource(android.R.drawable.btn_default);
+            mRecord.setText("Record again");
+        }
+
+        mStartRecording = !mStartRecording;
+    }
+
+    private void onRecord(boolean start) {
+        if (start) {
+            startRecording();
+        } else {
+            stopRecording();
+        }
+    }
+
+    private void startRecording() {
+        audioFileName = getActivity().getExternalCacheDir().getAbsolutePath();
+        audioFileName += "/artworkAudio.mp3";
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        recorder.setOutputFile(audioFileName);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            recorder.prepare();
+            recorder.start();
+        } catch (IOException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void stopRecording() {
+        recorder.stop();
+        recorder.reset();
+        recorder.release();
+        recorder = null;
+    }
+
+    //endregion
+
+    //region Playing
+
+    public void onClickPlay(){
+        onPlay(mStartPlaying);
+        if (mStartPlaying) {
+            mPlay.setText("Stop playing");
+        } else {
+            mPlay.setText("Start playing");
+        }
+        mStartPlaying = !mStartPlaying;
+    }
+
+    private void onPlay(boolean start) {
+        if (start) {
+            startPlaying();
+        } else {
+            stopPlaying();
+        }
+    }
+
+    private void startPlaying() {
+        player = new MediaPlayer();
+        try {
+            Log.d(TAG, "startPlaying: " + audioFileName);
+            player.setDataSource(audioFileName);
+            player.prepare();
+            player.start();
+        } catch (IOException e) {
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void stopPlaying() {
+        player.release();
+        player = null;
+    }
+
+    //endregion
 }

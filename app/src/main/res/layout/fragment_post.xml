@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/fragment_padding">
+    android:padding="@dimen/fragment_padding"
+    android:background="@drawable/post">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -76,6 +77,31 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/txtPostPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/price"
+                    android:inputType="text"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/txtPostLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/location"
+                    android:inputType="text"/>
+
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -97,6 +123,24 @@
                 android:layout_marginBottom="@dimen/error_vertical_margin"
                 android:textColor="@color/colorError"
                 android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/btnRecord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/btn_vertical_margin"
+                android:text="@string/action_record"
+                android:textSize="@dimen/btn_font_size"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/btnPlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/btn_vertical_margin"
+                android:text="@string/action_play"
+                android:textSize="@dimen/btn_font_size"
+                android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/btnPost"

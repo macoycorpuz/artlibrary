@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment {
         });
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        ArtworkHelper.enableBluetooth(getActivity(), mBluetoothAdapter);
+//        ArtworkHelper.enableBluetooth(getActivity(), mBluetoothAdapter);
         return mView;
     }
 

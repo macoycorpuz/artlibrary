@@ -6,6 +6,10 @@ public class Artwork {
     @Expose
     private int artworkId;
     @Expose
+    private int userId;
+    @Expose
+    private String deviceName;
+    @Expose
     private String artworkName;
     @Expose
     private String author;
@@ -14,11 +18,13 @@ public class Artwork {
     @Expose
     private String description;
     @Expose
+    private String price;
+    @Expose
+    private String location;
+    @Expose
     private String artworkUrl;
     @Expose
-    private String deviceName;
-    @Expose
-    private int userId;
+    private String artworkAudio;
     @Expose
     private User user;
     @Expose
@@ -27,13 +33,15 @@ public class Artwork {
     public Artwork() {
     }
 
-    public Artwork(String artworkName, String author, String date, String description, String deviceName, int userId) {
+    public Artwork(int userId, String deviceName, String artworkName, String author, String date, String description, String price, String location) {
+        this.userId = userId;
+        this.deviceName = deviceName;
         this.artworkName = artworkName;
         this.author = author;
         this.date = date;
         this.description = description;
-        this.deviceName = deviceName;
-        this.userId = userId;
+        this.price = price;
+        this.location = location;
     }
 
     public int getArtworkId() {
@@ -114,5 +122,29 @@ public class Artwork {
 
     public void setRssi(int rssi) {
         this.rssi = rssi;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getArtworkAudio() {
+        return artworkAudio;
+    }
+
+    public void setArtworkAudio(String artworkAudio) {
+        this.artworkAudio = artworkAudio;
     }
 }

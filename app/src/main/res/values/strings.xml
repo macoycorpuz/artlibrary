@@ -12,6 +12,8 @@
     <string name="date">Data Published</string>
     <string name="description">Description</string>
     <string name="deviceName">Device Name</string>
+    <string name="price">Price</string>
+    <string name="location">Location</string>
 
     <string name="name">Complete Name</string>
     <string name="email">Email</string>
@@ -25,6 +27,8 @@
     <string name="action_sign_up">Sign Up</string>
     <string name="action_sign_in">I already have an account.</string>
     <string name="action_logout">Logout</string>
+    <string name="action_record">Record Audio</string>
+    <string name="action_play">Play Audio</string>
     <string name="action_post">Post Artwork</string>
     <string name="action_search">Search</string>
     <string name="action_browse">Browse Area</string>
@@ -38,4 +42,5 @@
     <string name="error_invalid_password">Password is invalid</string>
     <string name="error_post_artwork">Please fill up all fields</string>
     <string name="error_product_image">Please upload product picture</string>
+    <string name="error_audio">Please add an audio for your artwork</string>
 </resources>

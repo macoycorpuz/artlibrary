@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#d8e7ff">
 
     <ImageView
         android:id="@+id/imgArtwork"
@@ -17,7 +18,8 @@
         android:layout_above="@id/viewArtButtons"
         android:layout_below="@id/imgArtwork"
         android:paddingLeft="@dimen/fragment_padding"
-        android:paddingRight="@dimen/fragment_padding">
+        android:paddingRight="@dimen/fragment_padding"
+        android:background="#d8e7ff">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,6 +79,26 @@
                 android:textColor="@android:color/background_dark"
                 android:textSize="16sp"
                 android:text="@string/description"/>
+
+
+            <TextView
+                android:id="@+id/txtArtPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/text_vertical_margin"
+                android:textColor="@android:color/background_dark"
+                android:textSize="16sp"
+                android:text="@string/price"/>
+
+
+            <TextView
+                android:id="@+id/txtArtLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/text_vertical_margin"
+                android:textColor="@android:color/background_dark"
+                android:textSize="16sp"
+                android:text="@string/location"/>
 
             <TextView
                 android:id="@+id/txtArtDeviceName"

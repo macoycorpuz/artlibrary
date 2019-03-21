@@ -50,6 +50,7 @@ public class HomeActivity  extends AppCompatActivity {
         permissionCheck += this.checkSelfPermission("Manifest.permission.BLUETOOTH_ADMIN");
         permissionCheck += this.checkSelfPermission("Manifest.permission.INTERNET");
         permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_NETWORK_STATE");
+        permissionCheck += this.checkSelfPermission("Manifest.permission.RECORD_AUDIO");
         if (permissionCheck != 0) {
             this.requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -59,7 +60,8 @@ public class HomeActivity  extends AppCompatActivity {
                     Manifest.permission.BLUETOOTH,
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.INTERNET,
-                    Manifest.permission.ACCESS_NETWORK_STATE}, 1001); //Any number
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.RECORD_AUDIO}, 1001); //Any number
         }
     }
 

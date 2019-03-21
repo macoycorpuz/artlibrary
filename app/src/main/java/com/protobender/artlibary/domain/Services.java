@@ -13,7 +13,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 
-public interface Services {
+public interface  Services {
 
     String MAIN_URL = "http://protobender.000webhostapp.com/ArtLibrary/public/";
     //String MAIN_URL = "http://192.168.1.7/ArtLibrary/public/";
@@ -32,13 +32,16 @@ public interface Services {
 
     @Multipart
     @POST("artworks")
-    Call<Result> setArtwork(@Part("artworkName") RequestBody artworkName,
+    Call<Result> setArtwork(@Part("userId") RequestBody userId,
+                            @Part("deviceName") RequestBody deviceName,
+                            @Part("artworkName") RequestBody artworkName,
                             @Part("author") RequestBody author,
                             @Part("date") RequestBody date,
                             @Part("description") RequestBody description,
-                            @Part("deviceName") RequestBody deviceName,
-                            @Part("userId") RequestBody userId,
-                            @Part("artworkImage\"; filename=\"artworkImage.jpg\" ") RequestBody artworkImage);
+                            @Part("price") RequestBody price,
+                            @Part("location") RequestBody location,
+                            @Part("artworkImage\"; filename=\"artworkImage.jpg\"") RequestBody artworkImage,
+                            @Part("artworkAudio\"; filename=\"artworkAudio.mp3\"") RequestBody artworkAudio);
 
     @GET("artworks")
     Call<Result> getArtworks();
